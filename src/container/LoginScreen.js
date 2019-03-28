@@ -22,7 +22,7 @@ export default class LoginPage extends Component {
     componentWillMount() {
         let loginscreen = [];
         loginscreen.push(
-            <Login parentContext = {this} appContext={this.props.parentContext} />
+            <Login parentContext={this} appContext={this.props.parentContext} />
         );
         let loginmessage = 'No registered yet register now';
         this.setState({
