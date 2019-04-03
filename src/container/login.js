@@ -3,7 +3,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import axios from 'axios';
-import auth from './auth'
+import { FormErrors } from './formError';
 
 export default class Login extends Component {
     constructor(props) {
@@ -11,19 +11,14 @@ export default class Login extends Component {
         this.state = {
             name:'',
             password:'',
-            isLoggined: false,
-            token: ''
+            token: '',
+            formErrors: {email: '', password: ''},
+            emailValid: false,
+            passwordValid: false,
+            formValid: false
         };
 
         this.handleClick = this.handleClick.bind(this);
-    }
-
-    showTodoPage() {
-        if (true) {
-            auth.login(() => {
-                this.props.history('/todoPage')
-            })
-        };
     }
 
     handleClick(event) {
@@ -46,7 +41,9 @@ export default class Login extends Component {
                         console.log('Login successfull');
                         this.setState({isLoggined: true});
                         this.setState({token: res.data.token})
-                        console.log(res.data.token);
+                        console.log(res.data.token, localStorage.getItem('token'));
+                        localStorage.setItem('isLogined', true);
+                        // this.props.isLoggined = true;
                     } else if (res.status === 204) {
                         console.log("Username password do not match");
                         alert("username password do not match")
@@ -63,26 +60,77 @@ export default class Login extends Component {
             return
         }
     }
+    
+    handleUserInput = (e) => {
+        const value = e.target.value;
+        const name = e.target.name;
+        this.setState({
+            [name]: value
+        }, () => {this.validateField(name, value)}
+        )
+    }
+
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let emailValid = this.state.emailValid;
+        let nameValid = this.state.nameValid;
+        let passwordValid = this.state.passwordValid;
+        let user = JSON.parse(localStorage.getItem('userData'));
+    switch(fieldName) {
+        case 'name':
+            nameValid = value === user.name;
+            fieldValidationErrors.name = nameValid ? '' : ' is invalid';
+
+        break;
+        case 'password':
+            passwordValid = value === user.password
+            fieldValidationErrors.password = passwordValid ? '': ' is invalid';
+        break;
+        default:
+        break;
+    }
+    this.setState({formErrors: fieldValidationErrors,
+                    emailValid: emailValid,
+                    passwordValid: passwordValid
+                    }, this.validateForm);
+    }
+
+    validateForm() {
+        this.setState({formValid: this.state.emailValid && this.state.passwordValid});
+        console.log(this.state.formValid)
+    }
 
     render() {
         return (
             <div key="1" className="inner-container">
             <MuiThemeProvider>
                 <div >
-                    <div style={style2} className="box">
+                    <div className="box">
                     <h3 className="header">Login</h3>
                     <TextField
                         hintText="Enter your Username"
                         floatingLabelText="Username"
-                        onChange = {(event,newValue) => this.setState({name:newValue})}
+                        name="name"
+                        className="input"
+                        onChange = {this.handleUserInput}
+                        required
                     />
+                    <div className="errorField">
+                        <FormErrors formErrors={this.state.formErrors} name="name"/>
+                    </div>
                     <br/>
                     <TextField
                         type="password"
                         hintText="Enter your Password"
                         floatingLabelText="Password"
-                        onChange = {(event,newValue) => this.setState({password:newValue})}
+                        name="password"
+                        className="input"
+                        onChange = {this.handleUserInput}
+                        required
                     />
+                    <div className="errorField">
+                        <FormErrors formErrors={this.state.formErrors} name="password"/>
+                    </div>
                     <br/>
                     <RaisedButton 
                         className="login-btn" 

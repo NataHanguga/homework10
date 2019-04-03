@@ -17,7 +17,7 @@ body,
     flex-direction: column;
     background: url('./images/yellow.jpg') no-repeat;
     background-size: cover;
-
+    overflow: auto;
 }
 
 .box-controller {
@@ -103,6 +103,7 @@ body,
 
 /* //Input */
 .login-input {
+    width: 50%;
     height: 2.1em;
     border-radius: 3px;
     border: 1px solid #70a1ff;
@@ -127,6 +128,7 @@ body,
 .login-input::placeholder {
     font-family: Oxygen, sans-serif;
     font-size: 16px; 
+    width: 50%;
     /* //color: rgba(46, 213, 116, 0.839); */
     color: rgba(15, 15, 15, 0.4);
 }
@@ -163,24 +165,6 @@ body,
     margin-top: 20px;
 }
 
-.pwd {
-    height: 6px;
-    flex: 1;
-    visibility: hidden;
-}
-
-.pwd-weak {
-    background-color: #e74c3c;
-}
-
-.pwd-medium {
-    background-color: #3498db;
-}
-
-.pwd-strong {
-    background-color: #2ecc71;
-}
-
 .show {
     visibility: visible;
 }
@@ -192,7 +176,10 @@ body,
 
 .description{
     white-space: nowrap; /* Отменяем перенос текста */
-    overflow: hidden; /* Обрезаем содержимое */
+    /* display: block; */
+    overflow: hidden; 
+    white-space: none; 
+    /* pre-wrap; */
     padding: 5px; /* Поля */
     /* width: 50%; */
     /* background: #fc0; Цвет фона */
@@ -227,4 +214,21 @@ body,
     border-radius: 50%;
     color: #ff0;
     background: #000;
+}
+.errorField{
+    color: #000;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    margin-bottom: -10px;
+    font-family: Ozxgen, sans-serif;
+    font-style: italic;
+    text-align: center;
+    /* font-weight: bold; */
+}
+
+.input{
+    margin: 0;
+    padding: 0;
+    margin-top: -14px;
 }

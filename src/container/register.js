@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-// import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import axios from 'axios';
+import { FormErrors } from './formError';
+
 
 export default class Register extends Component {
     constructor(props){
@@ -14,7 +15,14 @@ export default class Register extends Component {
             phoneNumber:'',
             email:'',
             password:'',
-            confirmPassword:''
+            confirmPassword:'',
+            nameValid: false,
+            surnameValid: false,
+            phoneValid: false,
+            emailValid: false,
+            passwordValid: false,
+            confirmPasswordValid: false,
+            formErrors: {name:'', surname:'', phone:'',email: '', password: '', confirmPassword:''},
         }
     }
 
@@ -56,53 +64,147 @@ export default class Register extends Component {
         }
     }
 
+    handleUserInput = (e) => {
+        const value = e.target.value;
+        const name = e.target.name;
+        this.setState({
+            [name]: value
+        }, () => {this.validateField(name, value)}
+        )
+    }
+
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let nameValid = this.state.nameValid;
+        let surnameValid = this.state.surnameValid;
+        let phoneValid = this.state.phoneValid;
+        let emailValid = this.state.emailValid;
+        let passwordValid = this.state.passwordValid;
+        let confirmPasswordValid = this.state.confirmPasswordValid;
+        
+        switch(fieldName) {
+            case 'name':
+                nameValid = value.length > 0;
+                fieldValidationErrors.name = nameValid ? '' : ' is invalid';
+            break;
+            case 'surname':
+                surnameValid = value.length > 0;
+                fieldValidationErrors.surname = surnameValid ? '' : ' is invalid';
+            break;
+            case 'phone':
+                phoneValid = value.length === 10;
+                fieldValidationErrors.phone = phoneValid ? '' : ' is invalid';
+            break;
+            case 'email':
+                emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+                fieldValidationErrors.email = emailValid ? '' : ' is invalid';
+            break;
+            case 'password':
+                passwordValid = value.length >= 5;
+                fieldValidationErrors.password = passwordValid ? '': ' is invalid';
+            break;
+            case 'confirmPassword':
+                confirmPasswordValid = value === this.state.password;
+                fieldValidationErrors.confirmPassword = confirmPasswordValid ? '': ' confirmPassword don`t equal password';
+            break;
+            default:
+            break;
+        }
+        this.setState({ formErrors: fieldValidationErrors,
+                        emailValid: emailValid,
+                        passwordValid: passwordValid,
+                        nameValid: nameValid,
+                        surnameValid: surnameValid,
+                        confirmPasswordValid: confirmPasswordValid
+                        }, this.validateForm);
+    }
+
+    validateForm() {
+        this.setState({formValid: 
+                        this.state.nameValid &&
+                        this.state.surnameValid &&
+                        this.state.phoneValid &&
+                        this.state.emailValid && 
+                        this.state.passwordValid &&
+                        this.state.confirmPasswordValid
+                    });
+        console.log(this.state.formValid)
+    }
+
     render() {
         return (
             <div>
                 <MuiThemeProvider>
                     <div className="inner-container">
-                        <div style={style2} className="box">
+                        <div className="box">
                         <h3 className="header">Registration</h3>
+                        <div className="errorField">
+                            <FormErrors formErrors={this.state.formErrors} />
+                        </div>
                         <TextField 
                             hintText="Enter your name"
                             floatingLabelText="Name"
-                            onChange={(event, newValue) => this.setState({name: newValue})}
+                            name="name"
+                            onChange = {this.handleUserInput}
                         />
+                        <div className="errorField">
+                            <FormErrors formErrors={this.state.formErrors} name="name"/>
+                        </div>
                         <br/>
                         <TextField 
                             hintText="Enter your surname"
                             floatingLabelText="Surname"
-                            onChange={(event, newValue) => this.setState({surname: newValue})}
+                            name="surname"
+                            onChange = {this.handleUserInput}
                         />
+                        <div className="errorField">
+                            <FormErrors formErrors={this.state.formErrors} name="surname"/>
+                        </div>
                         <br/>
                         <TextField 
                             hintText="Enter your phone number"
                             floatingLabelText="Phone Number"
-                            onChange={(event, newValue) => this.setState({phoneNumber: newValue})}
+                            name="phone"
+                            onChange = {this.handleUserInput}
                         />
+                        <div className="errorField">
+                            <FormErrors formErrors={this.state.formErrors} name="phone"/>
+                        </div>
                         <br/>
                         <TextField 
                             hintText="Enter your email"
                             floatingLabelText="Email"
                             type="email"
-                            onChange={(event, newValue) => this.setState({email: newValue})}
+                            name="email"
+                            onChange = {this.handleUserInput}
                         />
+                        <div className="errorField">
+                            <FormErrors formErrors={this.state.formErrors} name="email"/>
+                        </div>
                         <br/>
                         <TextField 
                             hintText="Enter your password"
                             floatingLabelText="Password"
                             type="password"
-                            onChange={(event, newValue) => this.setState({password: newValue})}
+                            name="password"
+                            onChange = {this.handleUserInput}
                         />
+                        <div className="errorField">
+                            <FormErrors formErrors={this.state.formErrors} name="password"/>
+                        </div>
                         <br/>
                         <TextField 
                             hintText="Enter confirm password"
                             floatingLabelText="Confirm Password"
                             type="password"
+                            name="confirmPassword"
                             onChange={(event, newValue) => this.setState({confirmPassword: newValue})}
                         />
+                        <div className="errorField">
+                            <FormErrors formErrors={this.state.formErrors} name="confirmPassword"/>
+                        </div>
                         <br/>
-                        <RaisedButton label="Submit" className="login-btn"  style={style} onClick={(event) => this.handleClick(event)} />
+                        <RaisedButton label="Submit" className="login-btn"  onClick={(event) => this.handleClick(event)} />
                     </div>
                     </div>
                 </MuiThemeProvider>
