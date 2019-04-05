@@ -15,7 +15,7 @@ body,
     justify-content: top;
     align-items: center;
     flex-direction: column;
-    background: url('./images/yellow.jpg') no-repeat;
+    background: url('images/yellow.jpg') no-repeat;
     background-size: cover;
     overflow: auto;
 }
