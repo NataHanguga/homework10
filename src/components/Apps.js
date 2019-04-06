@@ -2,11 +2,12 @@ import React, {Component} from 'react'
 import FadeTransition from './fadeTransition';
 import Login from './login';
 import Register from './register';
+import {Link} from 'react-router-dom'
 import '../App.css';
 
 export default class Apps extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       isLoginOpen: true,
       isRegisterOpen: false
@@ -43,14 +44,15 @@ export default class Apps extends Component {
         </div>
         <FadeTransition isOpen={this.state.isLoginOpen} duration={100}>
           <div className="box-container">
-            <Login onClick={this.props.isLogined}/>
+            <Login />
           </div>
         </FadeTransition>
         <FadeTransition isOpen={this.state.isRegisterOpen} duration={100}>
           <div className="box-container">
-            <Register/>
+            <Register />
           </div>
         </FadeTransition>
+        <Link to='/todo'>Todo</Link>
       </div>
     )
   }

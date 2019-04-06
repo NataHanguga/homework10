@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import axios from 'axios';
 import {FormErrors} from './formError';
+import Validation from '../services/validationFunctions'
+import AuthService from '../services/auth'
+
 
 
 export default class Register extends Component {
@@ -23,44 +25,6 @@ export default class Register extends Component {
       passwordValid: false,
       confirmPasswordValid: false,
       formErrors: {name: '', surname: '', phone: '', email: '', password: '', confirmPassword: ''},
-    }
-  }
-
-  handleClick(event) {
-    let apiBaseUrl = 'http://lectorium.herokuapp.com/api/';
-    const config = {'Content-Type': 'application/json'}
-
-    if (this.state.password === this.state.confirmPassword &&
-      (this.state.password !== '' && this.state.confirmPassword !== '')) {
-      console.log('Equal');
-      let payload = {
-        'name': this.state.name,
-        'surname': this.state.surname,
-        'phoneNumber': this.state.phoneNumber,
-        'email': this.state.email,
-        'password': this.state.password
-      };
-      console.log(payload);
-
-      axios.post(apiBaseUrl + 'registration', payload, {headers: config})
-        .then(
-          res => {
-            console.log(res.data.token);
-            if (res.status === 200) {
-              console.log('registration successfull');
-              localStorage.setItem('token', res.data.token)
-              localStorage.setItem('userData', JSON.stringify(payload));
-              alert('successfull registration. go to login');
-            }
-          })
-        .catch(
-          error => {
-            console.log(error);
-          }
-        );
-
-    } else {
-      console.log('Your password and confirmPassword not equal');
     }
   }
 
@@ -119,20 +83,7 @@ export default class Register extends Component {
       nameValid: nameValid,
       surnameValid: surnameValid,
       confirmPasswordValid: confirmPasswordValid
-    }, this.validateForm);
-  }
-
-  validateForm() {
-    this.setState({
-      formValid:
-        this.state.nameValid &&
-        this.state.surnameValid &&
-        this.state.phoneValid &&
-        this.state.emailValid &&
-        this.state.passwordValid &&
-        this.state.confirmPasswordValid
-    });
-    console.log(this.state.formValid)
+    },Validation.validateFormRegistration);
   }
 
   render() {
@@ -208,7 +159,15 @@ export default class Register extends Component {
                 <FormErrors formErrors={this.state.formErrors} name="confirmPassword"/>
               </div>
               <br/>
-              <RaisedButton label="Submit" className="login-btn" onClick={(event) => this.handleClick(event)}/>
+              <RaisedButton label="Submit" className="login-btn" 
+                  onClick={(event) => 
+                    AuthService.registerUser(event, 
+                      this.state.name, 
+                      this.state.surname, 
+                      this.state.password, 
+                      this.state.confirmPassword, 
+                      this.state.email, 
+                      this.state.phoneNumber)}/>
             </div>
           </div>
         </MuiThemeProvider>

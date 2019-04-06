@@ -10,14 +10,15 @@ export default class App extends Component {
       <div className="root-container">
         <Switch>
           <Route exact path='/todo' render={() => (
-            window.localStorage.getItem('isLogined') === 'true' ? (
+            JSON.parse(window.localStorage.getItem('isLogined')) ? (
               <TodoPage />
             ) : (
               <Redirect to='/'/>
             )
           )}/>
+          <Route exact path='/' component={Apps} />
           <Route exact path='/' render={() => (
-            !window.localStorage.getItem('isLogined') === 'true' ? (
+            !(JSON.parse(window.localStorage.getItem('isLogined'))) ? (
               <Apps />
             ) : (
               <Redirect to='/todo'/>
